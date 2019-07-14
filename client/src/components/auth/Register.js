@@ -31,6 +31,7 @@ const Register = props => {
 
   const onChange = e => setUser({ ...user, [e.target.name]: e.target.value });
 
+  // submit registration
   const onSubmit = e => {
     e.preventDefault();
 
