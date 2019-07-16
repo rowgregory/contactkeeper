@@ -8,6 +8,7 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
   const { isAuthenticated, loading } = authContext;
   return (
     <Route
+      // extra props
       {...rest}
       render={props =>
         !isAuthenticated && !loading ? (

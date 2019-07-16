@@ -1,5 +1,5 @@
 import React, { useReducer } from "react";
-import uuid from "uuid";
+import axios from "axios";
 import ContactContext from "./contactContext";
 import ContactReducer from "./contactReducer";
 import {
@@ -9,47 +9,40 @@ import {
   CLEAR_CURRENT,
   UPDATE_CONTACT,
   FILTER_CONTACT,
-  CLEAR_FILTER
+  CLEAR_FILTER,
+  CONTACT_ERROR
 } from "../types";
 
 const ContactState = props => {
   const initialState = {
-    contacts: [
-      {
-        id: 1,
-        name: "Devon Hunt",
-        email: "devondhunt@gmail.com",
-        phone: "123-456-7890",
-        type: "personal"
-      },
-      {
-        id: 2,
-        name: "Gregory Row",
-        email: "rowgregory@gmail.com",
-        phone: "111-111-4444",
-        type: "personal"
-      },
-      {
-        id: 3,
-        name: "Sarah Smith",
-        email: "ssmith@gmail.com",
-        phone: "111-111-1111",
-        type: "professional"
-      }
-    ],
+    contacts: [],
     // when we click edit I want whatever that contact that we edit
     // to be put into this piece of state which will be an object
     current: null,
-    filtered: null
+    filtered: null,
+    error: null
   };
   // state allows us to access anything in our state
   // allows us to dispatch objects to the reducer
   const [state, dispatch] = useReducer(ContactReducer, initialState);
 
   // Add Contact
-  const addContact = contact => {
-    contact.id = uuid.v4();
-    dispatch({ type: ADD_CONTACT, payload: contact });
+  const addContact = async contact => {
+    const config = {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    };
+
+    try {
+      const res = await axios.post("/api/contacts", contact, config);
+      dispatch({
+        type: ADD_CONTACT,
+        payload: res.data
+      });
+    } catch (err) {
+      dispatch({ type: CONTACT_ERROR, payload: err.response.msg });
+    }
   };
 
   // Delete Contact
@@ -88,6 +81,7 @@ const ContactState = props => {
         contacts: state.contacts,
         current: state.current,
         filtered: state.filtered,
+        error: state.error,
         addContact,
         deleteContact,
         setCurrent,
