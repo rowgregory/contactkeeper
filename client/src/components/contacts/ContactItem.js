@@ -6,12 +6,12 @@ const ContactItem = ({ contact }) => {
   const contactContext = useContext(ContactContext);
   const { deleteContact, setCurrent, clearCurrent } = contactContext;
 
-  const { id, name, email, phone, type } = contact;
+  const { _id, name, email, phone, type } = contact;
 
   const onDelete = () => {
     // we have access to the id becasue we are pulling it out
     // of the contact that passed into the props
-    deleteContact(id);
+    deleteContact(_id);
     clearCurrent();
   };
 
